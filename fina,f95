@@ -2,45 +2,39 @@ PROGRAM fina
 !==================================================
 
 IMPLICIT NONE
-INTEGER                      :: i, j, k
+INTEGER                      :: i
 REAL                         :: maxK, minK, avg
 CHARACTER(4)                 :: hhmm
-REAL   , DIMENSION(301, 251) :: temp
 INTEGER, DIMENSION(301, 251) :: TW, input
+REAL   , DIMENSION(301, 251) :: temp
 REAL   , DIMENSION(4051,  2) :: look
 
 !==================================================
-!input
+!input selected time
 CALL getarg(1, hhmm)
-
-!open file
+      
+!read file
 OPEN (UNIT=10, FILE='/home/B12/b12209017/fin_f/finf/lookup.txt',&
       FORM='FORMATTED', STATUS='OLD')
 OPEN (UNIT=20, FILE='/home/B12/b12209017/fin_f/finf/TWlsm2km.txt',&
       FORM='FORMATTED', STATUS='OLD')
 OPEN (UNIT=30, FILE='/home/B12/b12209017/fin_f/finf/input/20200723.'//hhmm//'TST_band14.txt',&
       FORM='FORMATTED', STATUS='OLD')
-      
-!read file
-DO i = 1, 251
 
-    READ(20,*) TW   (:,i)
-    READ(30,*) input(:,i)
-
-ENDDO
 DO i = 1, 4051
 
     READ(10,*) look (i,:)
 
 ENDDO
+
+DO i = 1, 251
+
+    READ(20,*) TW   (:,i)
+    READ(30,*) input(:,i)
     
-!fill array with real temperature
-DO k = 1, 251
-    DO j = 1, 301    
+    !fill temp array with real temperature
+    temp (:,i) = look(input(:,i)+1, 2)
 
-        temp (j,k) = look(input(j,k)+1, 2)
-
-    ENDDO
 ENDDO
 
 !get three kinds of value
@@ -64,4 +58,3 @@ close(20)
 close(30)
 !==================================================
 END PROGRAM
-
